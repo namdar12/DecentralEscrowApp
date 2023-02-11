@@ -24,4 +24,21 @@ contract Escrow {
 		emit Approved(balance);
 		isApproved = true;
 	}
+	
+	function revertDeposit() external{
+		require(!isApproved);
+		require(msg.sender == depositor);
+		uint balance = address(this).balance;
+	 	(bool sent,) = payable(depositor).call{value:balance}("");
+		require(sent);
+	}
+
+	function changeArbiter(address _arbiter) external{
+		require(msg.sender==arbiter);
+		arbiter = _arbiter;
+
+	}
+
+	
+
 }
