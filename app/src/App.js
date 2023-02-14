@@ -10,9 +10,10 @@ const CircularJSON = require('circular-json');
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-export async function approve(escrowContract, signer) {
+export async function approve(escrowContract, signer,txAddress) {
   const approveTxn = await escrowContract.connect(signer).approve();
   await approveTxn.wait();
+  
 }
 
 function App() {
@@ -59,7 +60,7 @@ function App() {
 
     try {
       await server.post(`/sendApproved`, {
-        txAddress:txAddress,
+        _txaddress: txAddress,
       });
     } catch (ex) {
       console.error(ex)
@@ -68,7 +69,7 @@ function App() {
   
   //This function needs to be sent to Escrow.js
   const handleApprove = async (txString,signer,txAddress) => {
-    const provider = new ethers.getDefaultProvider('goerli');
+    //const provider = new ethers.getDefaultProvider('goerli');
 
     const escrowContract = CircularJSON.parse(txString);
     console.log("me")
@@ -84,7 +85,6 @@ function App() {
       await approveTxn.wait();
       txApproved(txAddress) 
       
- 
   };
 
 
@@ -110,7 +110,10 @@ function App() {
             "✓ It's been approved!";
         });
 
-        await approve(escrowContract, signer);
+        await approve(escrowContract, signer,escrowContract.address);
+        txApproved(escrowContract.address) ;
+
+
       },
     };
     
@@ -162,7 +165,7 @@ function App() {
       <div className="existing-contracts">
       <h1> Previous Existing Contracts </h1>
       <div id="container">
-        {information !== undefined || information.data === 0 ? information.map((contractObject)=>{
+        {information != null || information.data === 0 ? information.map((contractObject)=>{
             return <div> 
             <p>hello</p>
             <p>txAddress: {contractObject.txAddress} </p>

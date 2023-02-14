@@ -45,9 +45,10 @@ app.post("/send", async (req, res) => {
 // });
 
 app.post("/sendApproved", async (req, res) => {
-  const address = req.body;
+  const {_txaddress} = req.body;
+  // if (address == null) return res.send()
   for(let i=0;i<contracts.length;i++){
-    if(contracts[i].txAddress ===address){
+    if(contracts[i].txAddress.toLowerCase() === _txaddress.toLowerCase()){
       contracts[i].approved = true;
       break;
     }
